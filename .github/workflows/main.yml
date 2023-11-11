@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: arc-k3s-runner-set
+    runs-on: ubuntu-latest
     env:
       APP_NAME: actions-runner
       REGISTRY: ${{ secrets.registry }}
