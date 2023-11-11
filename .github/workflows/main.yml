@@ -16,10 +16,10 @@ jobs:
       BUILD_CACHE: /home/runner/.docker/buildkit
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Login to private registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: "${{ secrets.REGISTRY }}"
           username: ${{ secrets.REGISTRY_USERNAME }}
@@ -28,12 +28,11 @@ jobs:
       - name: Prepare image tag
         id: prep
         run: |
-          SHA=$(echo ${{ inputs.github-sha }} | head -c8)
-          BUILDNUM=${{ inputs.build-number }}
-          IMAGE=${REGISTRY}/${APP_NAME
+          SHA=$(echo ${GITHUB_SHA} | head -c8)
+          BUILDNUM=${{ github.run_number }}
+          IMAGE=${REGISTRY}/${APP_NAME}
           echo "IMAGE ${IMAGE} BUILDNUM ${BUILDNUM} SHA $SHA"
           (echo "tagged_image=${IMAGE}:${BUILDNUM}-${SHA},${IMAGE}:latest"; echo "sha=${SHA}") >> "$GITHUB_OUTPUT"
-          echo "argo_image_with_tag=${IMAGE}:${BUILDNUM}-${SHA}" >> "$GITHUB_OUTPUT"
 
       - name: Compute cache key
         run: echo "CACHE_KEY=$(git ls-files | git hash-object --stdin)" >> "$GITHUB_ENV"
@@ -63,7 +62,7 @@ jobs:
         run: |
           BUILDKIT_URL="$(curl -sL https://api.github.com/repos/moby/buildkit/releases \
             | jq -r 'map(select(.name|startswith("v")))|sort_by(.name)[-1].assets[]|select(.name|endswith(".linux-amd64.tar.gz")).browser_download_url')"
-          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -L "${BUILDKIT_URL}" | sudo tar -xz -C /usr/local
+          curl -H "Authorization: token ${{ secrets.GH_PAT_TOKEN }}" -L "${BUILDKIT_URL}" | sudo tar -xz -C /usr/local
 
       - name: Start buildkit daemon
         run: |
