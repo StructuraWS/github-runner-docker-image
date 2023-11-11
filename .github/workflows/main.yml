@@ -1,0 +1,85 @@
+name: Pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'feature**'
+      - 'main'
+
+jobs:
+  build:
+    runs-on: arc-k3s-runner-set
+    env:
+      APP_NAME: actions-runner
+      REGISTRY: ${{ secrets.registry }}
+      BUILD_CACHE: /home/runner/.docker/buildkit
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to private registry
+        uses: docker/login-action@v2
+        with:
+          registry: "${{ secrets.registry }}"
+          username: ${{ secrets.registry-username }}
+          password: ${{ secrets.registry-password }}
+
+      - name: Prepare image tag
+        id: prep
+        run: |
+          SHA=$(echo ${{ inputs.github-sha }} | head -c8)
+          BUILDNUM=${{ inputs.build-number }}
+          IMAGE=${REGISTRY}/${APP_NAME
+          echo "IMAGE ${IMAGE} BUILDNUM ${BUILDNUM} SHA $SHA"
+          (echo "tagged_image=${IMAGE}:${BUILDNUM}-${SHA},${IMAGE}:latest"; echo "sha=${SHA}") >> "$GITHUB_OUTPUT"
+          echo "argo_image_with_tag=${IMAGE}:${BUILDNUM}-${SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Compute cache key
+        run: echo "CACHE_KEY=$(git ls-files | git hash-object --stdin)" >> "$GITHUB_ENV"
+
+      - name: Cache docker layers
+        id: dockercache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.BUILD_CACHE }}
+          key: cache-${{ env.CACHE_KEY }}
+          restore-keys: |
+            cache-
+
+      - name: Cache buildkitd
+        uses: actions/cache@v3
+        id: buildkit-cache
+        with:
+          path: |
+            /usr/local/bin/buildctl
+            /usr/local/bin/buildkitd
+          key: buildkit-
+          restore-keys: |
+            buildkit-
+
+      - if: ${{ steps.buildkit-cache.outputs.cache-hit != 'true' }}
+        name: Install the latest buildkit release
+        run: |
+          BUILDKIT_URL="$(curl -sL https://api.github.com/repos/moby/buildkit/releases \
+            | jq -r 'map(select(.name|startswith("v")))|sort_by(.name)[-1].assets[]|select(.name|endswith(".linux-amd64.tar.gz")).browser_download_url')"
+          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -L "${BUILDKIT_URL}" | sudo tar -xz -C /usr/local
+
+      - name: Start buildkit daemon
+        run: |
+          sudo --non-interactive --shell <<END_SUDO
+            install -d -m 0750 -o root -g docker /run/buildkit
+            buildkitd &
+            while ! test -S /run/buildkit/buildkitd.sock; do sleep 0.1; done
+            chgrp docker /run/buildkit/buildkitd.sock
+          END_SUDO
+
+      - name: Build docker image
+        run: |
+          buildctl build ... \
+            --frontend=dockerfile.v0 --local dockerfile=. --local context=. \
+            --export-cache "type=local,dest=${BUILD_CACHE},mode=max" \
+            --import-cache "type=local,src=${BUILD_CACHE}" \
+            --output type=image,\"name=${{ steps.prep.outputs.tagged_image }}\",push=true
+          echo "Cache size: $(du -sh ${BUILD_CACHE})"
+
