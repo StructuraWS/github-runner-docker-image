@@ -15,7 +15,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 SHELL ["/bin/bash", "-c"]
 RUN source $HOME/.cargo/env \
  && rustup target add aarch64-unknown-linux-gnu
-RUN echo . "$HOME/.cargo/env" >> "$HOME/.bashrc"
+ENV PATH="${PATH}:/home/runner/.cargo/bin"
 
 RUN sudo add-apt-repository ppa:deadsnakes/ppa \
   && sudo apt update \
@@ -26,3 +26,4 @@ RUN echo "alias python=python3" >> "$HOME/.bashrc"
 RUN python3 -m pip install --upgrade pip
 
 RUN pip install cargo-lambda
+
