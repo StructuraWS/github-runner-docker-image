@@ -17,7 +17,7 @@ RUN source $HOME/.cargo/env \
  && rustup target add aarch64-unknown-linux-gnu
 ENV PATH="${PATH}:/home/runner/.cargo/bin"
 
-# Validate the availability of the Rust compiler
+# Validate the availability of cargo
 RUN cargo
 
 RUN sudo add-apt-repository ppa:deadsnakes/ppa \
@@ -28,7 +28,13 @@ RUN echo "alias python=python3" >> "$HOME/.bashrc"
 
 RUN python3 -m pip install --upgrade pip
 
-RUN pip install cargo-lambda
+RUN pip3 install cargo-lambda
+
+# add modules installed with pip to PATH
+ENV PATH="${PATH}:/home/runner/.local/bin"
+
+# test availability of cargo-lambda
+RUN cargo lambda
 
 RUN (cd /tmp && curl -OJL https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip)
 
@@ -37,7 +43,5 @@ RUN unzip /tmp/aws-sam-cli-linux-x86_64.zip -d /tmp/sam-installation
 RUN sudo /tmp/sam-installation/install 
 RUN rm -rf /tmp/aws-sam-cli-linux-x86_64.zip /tmp/sam-installation
 
-RUN lsb_release -a
-RUN uname -m
-
+# this fails when built on an aarch64 machine, but succeeds when built on an x86_64 machine
 RUN sam --version
