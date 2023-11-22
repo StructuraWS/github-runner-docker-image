@@ -14,7 +14,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
 SHELL ["/bin/bash", "-c"]
 RUN source $HOME/.cargo/env \
- && rustup target add aarch64-unknown-linux-gnu
+ && rustup target add aarch64-unknown-linux-gnu x86_64-pc-windows-gnu
 ENV PATH="${PATH}:/home/runner/.cargo/bin"
 
 # Validate the availability of cargo
