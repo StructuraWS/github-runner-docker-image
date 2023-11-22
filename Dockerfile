@@ -7,6 +7,7 @@ RUN sudo apt update \
  && sudo apt upgrade -y \
  && sudo apt install -y curl unzip git \
  ca-certificates software-properties-common  \
+ # for cross compiling rust binaries to aarch64/arm64
  build-essential gcc-aarch64-linux-gnu \
  # for building rust binaries for windows
  gcc-mingw-w64 \
