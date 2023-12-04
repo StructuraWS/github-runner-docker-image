@@ -5,7 +5,7 @@ RUN curl -s https://deb.nodesource.com/setup_18.x | sudo bash
 
 RUN sudo apt update \
  && sudo apt upgrade -y \
- && sudo apt install -y curl unzip git libssl-dev \
+ && sudo apt install -y curl unzip git libssl-dev pkg-config cmake build-essential \
  ca-certificates software-properties-common  \
  # for cross compiling rust binaries to aarch64/arm64
  build-essential gcc-aarch64-linux-gnu \
