@@ -33,7 +33,7 @@ RUN echo "alias python=python3" >> "$HOME/.bashrc"
 
 RUN python3 -m pip install --upgrade pip
 
-RUN pip3 install cargo-lambda
+RUN pip3 install --upgrade cargo-lambda
 
 # add modules installed with pip to PATH
 ENV PATH="${PATH}:/home/runner/.local/bin"
