@@ -41,12 +41,5 @@ ENV PATH="${PATH}:/home/runner/.local/bin"
 # test availability of cargo-lambda
 RUN cargo lambda
 
-RUN (cd /tmp && curl -OJL https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-x86_64.zip)
-
-RUN unzip /tmp/aws-sam-cli-linux-x86_64.zip -d /tmp/sam-installation 
-
-RUN sudo /tmp/sam-installation/install 
-RUN rm -rf /tmp/aws-sam-cli-linux-x86_64.zip /tmp/sam-installation
-
-# this fails when built on an aarch64 machine, but succeeds when built on an x86_64 machine
-RUN sam --version
+COPY install-aws-sam-cli.sh /tmp/install-aws-sam-cli.sh
+RUN bash /tmp/install-aws-sam-cli.sh
