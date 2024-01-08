@@ -1,10 +1,11 @@
 FROM ghcr.io/actions/actions-runner:latest
 
+RUN sudo apt update && sudo apt install -y curl
+
 # Add PPA sources for Node.js 18
 RUN curl -s https://deb.nodesource.com/setup_18.x | sudo bash
 
-RUN sudo apt update \
- && sudo apt upgrade -y \
+RUN sudo apt upgrade -y \
  && sudo apt install -y curl unzip git libssl-dev build-essential jq \
  ca-certificates software-properties-common  \
  # for cross compiling rust binaries to aarch64/arm64
