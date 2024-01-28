@@ -7,6 +7,7 @@ RUN curl -s https://deb.nodesource.com/setup_18.x | sudo bash
 
 RUN sudo add-apt-repository ppa:deadsnakes/ppa \
   && sudo apt update \
+  && sudo apt upgrade -y \
   && sudo apt install -y python3.12 python3-pip \
   && sudo apt install -y unzip git libssl-dev build-essential jq ca-certificates \
     # for cross compiling rust binaries to aarch64/arm64
@@ -26,7 +27,6 @@ ENV PATH="${PATH}:/home/runner/.cargo/bin"
 
 # Validate the availability of cargo
 RUN cargo
-
 
 RUN echo "alias python=python3" >> "$HOME/.bashrc"
 
