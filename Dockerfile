@@ -25,8 +25,8 @@ RUN source $HOME/.cargo/env \
  && rustup update
 ENV PATH="${PATH}:/home/runner/.cargo/bin"
 
-# Validate the availability of cargo
-RUN cargo
+# Validate the availability of cargo and install cargo audit
+RUN cargo install  cargo-audit
 
 RUN echo "alias python=python3" >> "$HOME/.bashrc"
 
