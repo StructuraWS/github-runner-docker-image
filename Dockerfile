@@ -14,6 +14,8 @@ RUN sudo add-apt-repository ppa:deadsnakes/ppa \
     build-essential gcc-aarch64-linux-gnu \
     # for building rust binaries for windows
     gcc-mingw-w64 \
+    # for improved performance of building binaries with linux
+    lld clang \
     nodejs
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
