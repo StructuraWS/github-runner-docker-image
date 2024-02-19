@@ -15,7 +15,7 @@ RUN sudo add-apt-repository ppa:deadsnakes/ppa \
     # for building rust binaries for windows
     gcc-mingw-w64 \
     # for improved performance of building binaries with linux
-    lld clang \
+    # lld clang \
     nodejs
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -29,6 +29,10 @@ ENV PATH="${PATH}:/home/runner/.cargo/bin"
 
 # Validate the availability of cargo and install cargo audit
 RUN cargo install  cargo-audit
+
+# cargo nextest
+RUN curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
+
 
 RUN echo "alias python=python3" >> "$HOME/.bashrc"
 
