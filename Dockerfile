@@ -33,7 +33,6 @@ RUN cargo install  cargo-audit
 # cargo nextest
 RUN curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
 
-
 RUN echo "alias python=python3" >> "$HOME/.bashrc"
 
 RUN python3 -m pip install --upgrade pip
