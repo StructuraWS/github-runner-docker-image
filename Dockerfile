@@ -55,3 +55,5 @@ RUN curl -LO $PB_REL/download/v25.1/protoc-25.1-linux-x86_64.zip && \
   rm protoc-25.1-linux-x86_64.zip
 
 RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.bashrc" SHELL="$(which bash)" bash -
+
+RUN pnpm version
