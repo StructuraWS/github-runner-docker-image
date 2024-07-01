@@ -1,5 +1,7 @@
-# FROM ghcr.io/actions/actions-runner-dind:latest
-FROM summerwind/actions-runner-dind:latest
+FROM ghcr.io/actions/actions-runner:latest
+
+# FROM summerwind/actions-runner-dind:latest
+# WORKDIR /tmp
 
 RUN sudo apt update && sudo apt install -y curl software-properties-common
 
@@ -51,8 +53,6 @@ RUN cargo lambda
 
 COPY install-aws-sam-cli.sh /tmp/install-aws-sam-cli.sh
 RUN bash /tmp/install-aws-sam-cli.sh
-
-WORKDIR /tmp
 
 ENV PB_REL="https://github.com/protocolbuffers/protobuf/releases"
 RUN curl -LO $PB_REL/download/v25.1/protoc-25.1-linux-x86_64.zip && \
