@@ -1,4 +1,5 @@
-FROM ghcr.io/actions/actions-runner:latest
+# FROM ghcr.io/actions/actions-runner-dind:latest
+FROM summerwind/actions-runner-dind:latest
 
 RUN sudo apt update && sudo apt install -y curl software-properties-common
 
