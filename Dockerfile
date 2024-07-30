@@ -28,6 +28,7 @@ SHELL ["/bin/bash", "-c"]
 RUN source $HOME/.cargo/env \
  && rustup target add aarch64-unknown-linux-gnu x86_64-pc-windows-gnu \
  && rustup self update \
+# last bump: 1.80.0
  && rustup update
 ENV PATH="${PATH}:/home/runner/.cargo/bin"
 
