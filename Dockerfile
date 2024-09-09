@@ -23,7 +23,7 @@ RUN sudo add-apt-repository ppa:deadsnakes/ppa \
     # lld clang \
     nodejs
 
-# current version of rustc is 1.79.0
+# current version of rustc is 1.81.0
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
 SHELL ["/bin/bash", "-c"]
