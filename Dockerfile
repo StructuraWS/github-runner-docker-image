@@ -1,4 +1,4 @@
-# bumped on 2024-09-03
+# bumped on 2024-12-02
 # current version of the actions runner is 2.319.1
 FROM ghcr.io/actions/actions-runner:latest
 
@@ -15,23 +15,23 @@ RUN sudo add-apt-repository ppa:deadsnakes/ppa \
   && sudo apt upgrade -y \
   && sudo apt install -y python3 python3-pip \
   && sudo apt install -y unzip git libssl-dev build-essential jq ca-certificates \
-    # for cross compiling rust binaries to aarch64/arm64
-    build-essential gcc-aarch64-linux-gnu \
-    # for building rust binaries for windows
-    gcc-mingw-w64 \
-    # for improved performance of building binaries with linux
-    # lld clang \
-    nodejs
+  # for cross compiling rust binaries to aarch64/arm64
+  build-essential gcc-aarch64-linux-gnu \
+  # for building rust binaries for windows
+  gcc-mingw-w64 \
+  # for improved performance of building binaries with linux
+  # lld clang \
+  nodejs
 
 # current version of rustc is 1.81.0
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
 SHELL ["/bin/bash", "-c"]
 RUN source $HOME/.cargo/env \
- && rustup target add aarch64-unknown-linux-gnu x86_64-pc-windows-gnu \
- && rustup self update \
-# last bump: 1.80.0
- && rustup update
+  && rustup target add aarch64-unknown-linux-gnu x86_64-pc-windows-gnu \
+  && rustup self update \
+  # last bump: 1.80.0
+  && rustup update
 ENV PATH="${PATH}:/home/runner/.cargo/bin"
 
 SHELL ["/bin/sh", "-c"]
