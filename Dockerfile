@@ -6,16 +6,19 @@ FROM ghcr.io/actions/actions-runner:latest
 # FROM summerwind/actions-runner-dind:latest
 # WORKDIR /tmp
 
-RUN sudo apt update && sudo apt install -y curl software-properties-common
+RUN sudo apt update && sudo apt install -y curl software-properties-common curl gnupg ca-certificates
 
-# Add PPA sources for Node.js 18
-RUN curl -s https://deb.nodesource.com/setup_18.x | sudo bash
+# update npm
+RUN sudo mkdir -p /etc/apt/keyrings
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+ENV NODE_MAJOR=20
+RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
 
 RUN sudo add-apt-repository ppa:deadsnakes/ppa \
   && sudo apt update \
   && sudo apt upgrade -y \
   && sudo apt install -y python3 python3-pip \
-  && sudo apt install -y unzip git libssl-dev build-essential jq ca-certificates \
+  && sudo apt install -y unzip git libssl-dev build-essential jq \
   # for cross compiling rust binaries to aarch64/arm64
   build-essential gcc-aarch64-linux-gnu \
   # for building rust binaries for windows
