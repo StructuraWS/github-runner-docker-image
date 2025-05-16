@@ -1,6 +1,6 @@
 # bumped on 2025-04-22
 # current version of the actions runner is 2.319.1
-# current version of rust is 1.86.0
+# current version of rust is 1.87.0
 FROM ghcr.io/actions/actions-runner:latest
 
 # FROM summerwind/actions-runner-dind:latest
