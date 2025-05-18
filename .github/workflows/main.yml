@@ -33,11 +33,30 @@ jobs:
           echo "IMAGE ${IMAGE} BUILDNUM ${BUILDNUM} SHA $SHA"
           (echo "tagged_image=${IMAGE}:${BUILDNUM}-${SHA},${IMAGE}:latest"; echo "sha=${SHA}") >> "$GITHUB_OUTPUT"
 
-      - name: Install the latest buildkit release
+      - name: Install the latest BuildKit release
+        env:
+           GH_TOKEN: ${{ secrets.GH_PAT_TOKEN }}
         run: |
-          BUILDKIT_URL="$(curl -sL https://api.github.com/repos/moby/buildkit/releases \
-            | jq -r 'map(select(.name|startswith("v")))|sort_by(.name)[-1].assets[]|select(.name|endswith(".linux-amd64.tar.gz")).browser_download_url')"
-          curl -H "Authorization: token ${{ secrets.GH_PAT_TOKEN }}" -L "${BUILDKIT_URL}" | sudo tar -xz -C /usr/local
+          set -euo pipefail
+
+          # Download release metadata (no token)
+          curl -sL https://api.github.com/repos/moby/buildkit/releases -o releases.json
+
+          # Optional: view the JSON (good for debugging)
+          # cat releases.json | jq .
+
+          # Find the latest non prerelease and nondraft .linux-amd64.tar.gz asset
+          BUILDKIT_URL=$(jq -r '
+            map(select(.prerelease == false and .draft == false))
+            | sort_by(.published_at) | reverse
+            | .[] 
+            | .assets[]? 
+            | select(.name | endswith(".linux-amd64.tar.gz")) 
+            | .browser_download_url
+          ' releases.json | head -n 1)
+
+          echo "Downloading: $BUILDKIT_URL"
+          curl -sL "$BUILDKIT_URL" | sudo tar -xz -C /usr/local/bin --strip-components=1
 
       - name: Start buildkit daemon
         run: |
