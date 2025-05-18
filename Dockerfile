@@ -34,14 +34,13 @@ SHELL ["/bin/bash", "-c"]
 RUN source $HOME/.cargo/env \
   && rustup target add aarch64-unknown-linux-gnu x86_64-pc-windows-gnu \
   && rustup self update \
-  # last bump: 1.80.0
   && rustup update
 ENV PATH="${PATH}:/home/runner/.cargo/bin"
 
 SHELL ["/bin/sh", "-c"]
 
 # Validate the availability of cargo and install cargo audit
-RUN cargo install  cargo-audit
+RUN cargo install cargo-audit
 
 # cargo nextest
 RUN curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
@@ -61,10 +60,13 @@ RUN cargo lambda
 COPY install-aws-sam-cli.sh /tmp/install-aws-sam-cli.sh
 RUN bash /tmp/install-aws-sam-cli.sh
 
-ENV PB_REL="https://github.com/protocolbuffers/protobuf/releases"
-RUN curl -LO $PB_REL/download/v25.1/protoc-25.1-linux-x86_64.zip && \
-  sudo unzip protoc-25.1-linux-x86_64.zip -d /usr/local && \
-  rm protoc-25.1-linux-x86_64.zip
+# ENV PB_REL="https://github.com/protocolbuffers/protobuf/releases"
+# RUN curl -LO $PB_REL/download/v25.1/protoc-25.1-linux-x86_64.zip && \
+#   sudo unzip protoc-25.1-linux-x86_64.zip -d /usr/local && \
+#   rm protoc-25.1-linux-x86_64.zip
+
+COPY download-protoc.sh /tmp/download-protoc.sh
+RUN sudo bash /tmp/download-protoc.sh
 
 RUN sudo npm install -g npm@latest pnpm
 RUN pnpm version
