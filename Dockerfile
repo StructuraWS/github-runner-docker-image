@@ -1,4 +1,4 @@
-# bumped on 2025-04-22
+# bumped on 2025-08-28
 # current version of the actions runner is 2.325.0
 # current version of rust is 1.88.0
 FROM ghcr.io/actions/actions-runner:latest
