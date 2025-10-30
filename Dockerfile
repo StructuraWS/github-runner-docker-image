@@ -1,4 +1,4 @@
-# bumped on 2025-08-28
+# bumped on 2025-10-30
 # current version of the actions runner is 2.325.0
 # current version of rust is 1.90.0
 FROM ghcr.io/actions/actions-runner:latest
@@ -37,9 +37,11 @@ RUN source $HOME/.cargo/env \
   && rustup target add aarch64-unknown-linux-gnu x86_64-pc-windows-gnu \
   && rustup self update \
   && rustup update
-ENV PATH="${PATH}:/home/runner/.cargo/bin"
 
 SHELL ["/bin/sh", "-c"]
+
+# add modules installed with pip to PATH
+ENV PATH="${PATH}:/home/runner/.cargo/bin:/home/runner/.local/bin:/home/runner/.local/bin:/usr/local/bin"
 
 # Validate the availability of cargo and install cargo audit
 RUN cargo install cargo-audit 
@@ -55,12 +57,6 @@ RUN python3 -m pip install --upgrade pip
 
 RUN pip3 install --upgrade cargo-lambda
 
-# add modules installed with pip to PATH
-ENV PATH="${PATH}:/home/runner/.local/bin"
-
-# test availability of cargo-lambda
-RUN cargo lambda
-
 COPY install-aws-sam-cli.sh /tmp/install-aws-sam-cli.sh
 RUN bash /tmp/install-aws-sam-cli.sh
 
@@ -74,3 +70,15 @@ RUN sudo bash /tmp/download-protoc.sh
 
 RUN sudo npm install -g npm@latest pnpm
 RUN pnpm version
+
+USER runner
+
+# add modules installed with pip to PATH
+ENV PATH="${PATH}:/home/runner/.cargo/bin:/home/runner/.local/bin:/home/runner/.local/bin:/usr/local/bin"
+
+# test availability of sccache as runner user
+RUN which sccache
+
+# test availability of cargo-lambda
+RUN cargo lambda
+
