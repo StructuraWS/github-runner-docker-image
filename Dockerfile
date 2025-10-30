@@ -23,6 +23,8 @@ RUN sudo add-apt-repository ppa:deadsnakes/ppa \
   build-essential gcc-aarch64-linux-gnu \
   # for building rust binaries for windows
   gcc-mingw-w64 \
+  # for sccache \
+  pkg-config libssl-dev \
   # for improved performance of building binaries with linux
   # lld clang \
   nodejs
@@ -40,7 +42,9 @@ ENV PATH="${PATH}:/home/runner/.cargo/bin"
 SHELL ["/bin/sh", "-c"]
 
 # Validate the availability of cargo and install cargo audit
-RUN cargo install cargo-audit
+RUN cargo install cargo-audit 
+
+RUN cargo install sccache
 
 # cargo nextest
 RUN curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
