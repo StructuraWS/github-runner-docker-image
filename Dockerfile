@@ -25,6 +25,10 @@ RUN sudo add-apt-repository ppa:deadsnakes/ppa \
   gcc-mingw-w64 \
   # for sccache \
   pkg-config libssl-dev \
+  # for custom build command for libz-ng-sys used by awsrs
+  cmake \
+  # for cross copilation
+  ninja-build \ 
   # for improved performance of building binaries with linux
   # lld clang \
   nodejs
