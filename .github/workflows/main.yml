@@ -27,6 +27,7 @@ jobs:
       - name: Prepare image tag
         id: prep
         run: |
+          exit 1
           SHA=$(echo ${GITHUB_SHA} | head -c8)
           BUILDNUM=${{ github.run_number }}
           IMAGE=${REGISTRY}/${APP_NAME}
