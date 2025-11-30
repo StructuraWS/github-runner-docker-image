@@ -1,0 +1,26 @@
+name: Pushover on Failure
+
+on:
+  workflow_run:
+    workflows: ["*"]
+    types:
+      - completed
+
+jobs:
+  # Notify on any failure
+  notify-failure:
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    uses: alexandervantrijffel/workflows/.github/workflows/pushover-workflow-failure.yaml@main
+    with:
+      title: "❌ ${{ github.event.workflow_run.name }} Failed"
+      message: |
+        Branch: ${{ github.event.workflow_run.head_branch }}
+        Commit: ${{ github.event.workflow_run.head_sha }}
+        By: ${{ github.event.workflow_run.triggering_actor.login }}
+        Run: #${{ github.event.workflow_run.run_number }}
+      url: "${{ github.event.workflow_run.html_url }}"
+      url_title: "View Failed Workflow"
+      priority: "1"
+    secrets:
+      pushover-token: ${{ secrets.PUSHOVER_APP_TOKEN }}
+      pushover-user: ${{ secrets.PUSHOVER_USER_KEY }}
