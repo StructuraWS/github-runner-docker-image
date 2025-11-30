@@ -15,10 +15,10 @@ jobs:
       title: "❌ ${{ github.event.workflow_run.name }} Failed"
       message: |
         Repository: ${{ github.repository }}
-        Workflow: ${{ github.event.workflow_run.name }}
         Branch: ${{ github.event.workflow_run.head_branch }}
-        Triggered by: ${{ github.event.workflow_run.triggering_actor.login }}
+        Workflow: ${{ github.event.workflow_run.name }}
         Run #${{ github.event.workflow_run.run_number }}
+        Triggered by: ${{ github.event.workflow_run.triggering_actor.login }}
       url: "${{ github.event.workflow_run.html_url }}"
       url_title: "View Failed Workflow"
       priority: "1"
