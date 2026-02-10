@@ -57,7 +57,8 @@ RUN curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-~/
 
 RUN echo "alias python=python3" >> "$HOME/.bashrc"
 
-RUN python3 -m pip install --upgrade pip
+RUN apt install python3-pip
+# RUN python3 -m pip install --upgrade pip
 
 RUN pip3 install --upgrade cargo-lambda
 
