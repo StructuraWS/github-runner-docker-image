@@ -12,7 +12,7 @@ fi
 
 unzip /tmp/aws-sam-cli-$THEARCH.zip -d /tmp/sam-installation 
 
-sudo /tmp/sam-installation/install 
+/tmp/sam-installation/install
 rm -rf /tmp/aws-sam-cli-$THEARCH.zip /tmp/sam-installation
 
 # this fails when built on an aarch64 machine, but succeeds when built on an x86_64 machine
