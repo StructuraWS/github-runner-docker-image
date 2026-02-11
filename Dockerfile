@@ -70,7 +70,8 @@ RUN bash /tmp/install-aws-sam-cli.sh
 COPY download-protoc.sh /tmp/download-protoc.sh
 RUN sudo bash /tmp/download-protoc.sh
 
-RUN sudo npm install -g npm@latest pnpm
+RUN sudo npm install -g npm@latest pnpm -g @ziglang/cli
+
 RUN pnpm version
 
 USER runner
