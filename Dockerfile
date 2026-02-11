@@ -6,6 +6,8 @@ FROM ghcr.io/actions/actions-runner:latest
 # FROM summerwind/actions-runner-dind:latest
 # WORKDIR /tmp
 
+USER root
+
 RUN apt update && apt install -y software-properties-common curl gnupg ca-certificates
 
 # update npm
@@ -79,4 +81,3 @@ RUN which sccache
 
 # test availability of cargo-lambda
 RUN cargo lambda --version
-
