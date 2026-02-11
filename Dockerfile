@@ -6,33 +6,33 @@ FROM ghcr.io/actions/actions-runner:latest
 # FROM summerwind/actions-runner-dind:latest
 # WORKDIR /tmp
 
-RUN sudo apt update && sudo apt install -y software-properties-common curl gnupg ca-certificates
+RUN apt update && apt install -y software-properties-common curl gnupg ca-certificates
 
 # update npm
-RUN sudo mkdir -p /etc/apt/keyrings
-RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+RUN mkdir -p /etc/apt/keyrings
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
 ENV NODE_MAJOR=22
-RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
 
-RUN sudo add-apt-repository ppa:deadsnakes/ppa \
-  && sudo apt update \
-  && sudo apt upgrade -y \
-  && sudo apt install -y python3 \
-  && sudo apt install -y unzip git libssl-dev build-essential jq \
+RUN add-apt-repository ppa:deadsnakes/ppa \
+  && apt update \
+  && apt upgrade -y \
+  && apt install -y python3 \
+  && apt install -y unzip git libssl-dev build-essential jq \
   # for cross compiling rust binaries to aarch64/arm64
-  && sudo apt install -y build-essential gcc-aarch64-linux-gnu \
+  && apt install -y build-essential gcc-aarch64-linux-gnu \
   # for building rust binaries for windows
-  && sudo apt install -y gcc-mingw-w64 \
+  && apt install -y gcc-mingw-w64 \
   # for sccache \
-  && sudo apt install -y pkg-config libssl-dev \
+  && apt install -y pkg-config libssl-dev \
   # for custom build command for libz-ng-sys used by awsrs
-  && sudo apt install -y cmake \
+  && apt install -y cmake \
   # for cross copilation
-  && sudo apt install -y ninja-build \ 
+  && apt install -y ninja-build \ 
   # for improved performance of building binaries with linux
   # lld clang \
-  && sudo apt install -y nodejs \
-  && sudo apt clean
+  && apt install -y nodejs \
+  && apt clean
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
@@ -57,24 +57,22 @@ RUN curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-~/
 
 RUN echo "alias python=python3" >> "$HOME/.bashrc"
 
-RUN sudo curl -fsSL https://cargo-lambda.info/install.sh | sh
+RUN curl -fsSL https://cargo-lambda.info/install.sh | sh
 
 COPY install-aws-sam-cli.sh /tmp/install-aws-sam-cli.sh
 RUN bash /tmp/install-aws-sam-cli.sh
 
 # ENV PB_REL="https://github.com/protocolbuffers/protobuf/releases"
 # RUN curl -LO $PB_REL/download/v25.1/protoc-25.1-linux-x86_64.zip && \
-#   sudo unzip protoc-25.1-linux-x86_64.zip -d /usr/local && \
+#   unzip protoc-25.1-linux-x86_64.zip -d /usr/local && \
 #   rm protoc-25.1-linux-x86_64.zip
 
 COPY download-protoc.sh /tmp/download-protoc.sh
-RUN sudo bash /tmp/download-protoc.sh
+RUN bash /tmp/download-protoc.sh
 
-RUN sudo npm install -g npm@latest pnpm -g @ziglang/cli
+RUN npm install -g npm@latest pnpm -g @ziglang/cli
 
 RUN pnpm version
-
-USER runner
 
 # test availability of sccache as runner user
 RUN which sccache
