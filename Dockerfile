@@ -47,7 +47,7 @@ RUN source $HOME/.cargo/env \
 SHELL ["/bin/sh", "-c"]
 
 # add modules installed with pip to PATH
-ENV PATH="${PATH}:/home/runner/.cargo/bin:/home/runner/.local/bin:/home/runner/.local/bin:/usr/local/bin"
+ENV PATH="${PATH}:/root/.cargo/bin:/home/runner/.cargo/bin:/home/runner/.local/bin:/usr/local/bin"
 
 # Validate the availability of cargo and install cargo audit
 RUN cargo install cargo-audit 
