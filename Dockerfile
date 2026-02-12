@@ -81,3 +81,5 @@ RUN which sccache
 
 # test availability of cargo-lambda
 RUN cargo lambda --version
+
+RUN echo "root ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
