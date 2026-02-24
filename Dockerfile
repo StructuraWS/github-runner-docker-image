@@ -52,7 +52,10 @@ ENV PATH="${PATH}:/root/.cargo/bin:/home/runner/.cargo/bin:/home/runner/.local/b
 # Validate the availability of cargo and install cargo audit
 RUN cargo install cargo-audit 
 
-RUN cargo install sccache
+RUN cargo install sccache \
+  && cp /root/.cargo/bin/sccache /usr/local/bin/sccache
+
+ENV RUSTC_WRAPPER=sccache
 
 # cargo nextest
 RUN curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
