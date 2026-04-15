@@ -77,7 +77,7 @@ RUN bash /tmp/install-aws-sam-cli.sh
 COPY download-protoc.sh /tmp/download-protoc.sh
 RUN bash /tmp/download-protoc.sh
 
-RUN npm install -g npm@latest pnpm -g @ziglang/cli
+RUN npm install -g npm@latest pnpm @ziglang/cli
 
 RUN pnpm version
 
