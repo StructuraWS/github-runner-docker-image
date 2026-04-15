@@ -69,9 +69,17 @@ jobs:
 
       - name: Build docker image
         run: |
-          buildctl build ... \
+          set -euo pipefail
+          buildctl build \
             --frontend=dockerfile.v0 --local dockerfile=. --local context=. \
-            --output type=image,\"name=${{ steps.prep.outputs.tagged_image }}\",push=true
+            --output type=image,"name=${{ steps.prep.outputs.tagged_image }}",push=true \
+            --progress=plain 2>&1 | tee build.log
+          EXIT_CODE=${PIPESTATUS[0]}
+          if [ "$EXIT_CODE" -ne 0 ]; then
+            echo "::error::Docker build failed (exit $EXIT_CODE). Last 50 lines:"
+            tail -50 build.log
+            exit "$EXIT_CODE"
+          fi
 
 #      - name: Set up Docker Buildx
 #        uses: docker/setup-buildx-action@v3
