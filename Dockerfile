@@ -77,7 +77,18 @@ RUN bash /tmp/install-aws-sam-cli.sh
 COPY download-protoc.sh /tmp/download-protoc.sh
 RUN bash /tmp/download-protoc.sh
 
-RUN npm install -g npm@latest pnpm @ziglang/cli
+RUN npm install -g npm@latest pnpm
+
+# Install Zig via official release
+RUN ZIG_VERSION=0.15.1 && \
+    ARCH=$(uname -m) && \
+    case "$ARCH" in \
+      x86_64)  ZIG_ARCH="x86_64" ;; \
+      aarch64) ZIG_ARCH="aarch64" ;; \
+      *) echo "Unsupported arch: $ARCH" && exit 1 ;; \
+    esac && \
+    curl -L "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-${ZIG_ARCH}-${ZIG_VERSION}.tar.xz" | tar -xJ -C /opt && \
+    ln -s /opt/zig-linux-${ZIG_ARCH}-${ZIG_VERSION}/zig /usr/local/bin/zig
 
 RUN pnpm version
 
