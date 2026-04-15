@@ -26,7 +26,7 @@ RUN add-apt-repository ppa:deadsnakes/ppa \
   # for building rust binaries for windows
   && apt install -y gcc-mingw-w64 \
   # for sccache \
-  && apt install -y pkg-config libssl-dev \
+  # && apt install -y pkg-config libssl-dev \
   # for custom build command for libz-ng-sys used by awsrs
   && apt install -y cmake \
   # for cross copilation
@@ -50,12 +50,13 @@ SHELL ["/bin/sh", "-c"]
 ENV PATH="${PATH}:/root/.cargo/bin:/home/runner/.cargo/bin:/home/runner/.local/bin:/usr/local/bin"
 
 # Validate the availability of cargo and install cargo audit
-RUN cargo install cargo-audit 
+# Also install cargo cache for auto clean the cache
+RUN cargo install cargo-audit cargo-cache
 
-RUN cargo install sccache \
-  && cp /root/.cargo/bin/sccache /usr/local/bin/sccache
+# RUN cargo install sccache \
+#   && cp /root/.cargo/bin/sccache /usr/local/bin/sccache
 
-ENV RUSTC_WRAPPER=sccache
+# ENV RUSTC_WRAPPER=sccache
 
 # cargo nextest
 RUN curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
@@ -79,8 +80,8 @@ RUN npm install -g npm@latest pnpm -g @ziglang/cli
 
 RUN pnpm version
 
-# test availability of sccache as runner user
-RUN which sccache
+# # test availability of sccache as runner user
+# RUN which sccache
 
 # test availability of cargo-lambda
 RUN cargo lambda --version
