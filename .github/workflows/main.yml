@@ -69,7 +69,7 @@ jobs:
 
       - name: Build docker image
         run: |
-          set -euo pipefail
+          set -uo pipefail
           TAGGED_IMAGE="${{ steps.prep.outputs.tagged_image }}"
           buildctl build \
             --frontend=dockerfile.v0 --local dockerfile=. --local context=. \
