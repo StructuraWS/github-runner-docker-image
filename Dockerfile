@@ -36,6 +36,11 @@ RUN add-apt-repository ppa:deadsnakes/ppa \
   && apt install -y nodejs \
   && apt clean
 
+RUN npm install -g pnpm --verbose
+RUN npm install -g @ziglang/zig --verbose
+
+RUN pnpm version
+
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
 SHELL ["/bin/bash", "-c"]
@@ -76,12 +81,6 @@ RUN bash /tmp/install-aws-sam-cli.sh
 
 COPY download-protoc.sh /tmp/download-protoc.sh
 RUN bash /tmp/download-protoc.sh
-
-RUN npm install -g npm@latest 
-RUN npm install -g pnpm 
-RUN npm install -g @ziglang/zig
-
-RUN pnpm version
 
 # test availability of sccache as runner user
 RUN which sccache

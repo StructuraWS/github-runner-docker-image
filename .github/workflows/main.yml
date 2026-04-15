@@ -70,9 +70,10 @@ jobs:
       - name: Build docker image
         run: |
           set -euo pipefail
+          TAGGED_IMAGE="${{ steps.prep.outputs.tagged_image }}"
           buildctl build \
             --frontend=dockerfile.v0 --local dockerfile=. --local context=. \
-            --output type=image,"name=${{ steps.prep.outputs.tagged_image }}",push=true \
+            --output "type=image,\"name=${TAGGED_IMAGE}\",push=true" \
             --progress=plain 2>&1 | tee build.log
           EXIT_CODE=${PIPESTATUS[0]}
           if [ "$EXIT_CODE" -ne 0 ]; then
