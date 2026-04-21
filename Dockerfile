@@ -37,7 +37,7 @@ RUN add-apt-repository ppa:deadsnakes/ppa \
   && apt clean
 
 RUN npm install -g pnpm --verbose
-RUN npm install -g @ziglang/zig --verbose
+RUN npm install -g @ziglang/cli --verbose
 
 RUN pnpm version
 
@@ -89,3 +89,11 @@ RUN which sccache
 RUN cargo lambda --version
 
 RUN echo "root ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Wrap run.sh to pre-create _runner_file_commands dir.
+# _work is a hostPath mount so mkdir in image layers doesn't persist;
+# this wrapper runs after the volume is mounted.
+RUN mv /home/runner/run.sh /home/runner/run.sh.orig \
+    && printf '#!/bin/bash\nmkdir -p "${RUNNER_TEMP:-/home/runner/_work/_temp}/_runner_file_commands"\nexec /home/runner/run.sh.orig "$@"\n' \
+       > /home/runner/run.sh \
+    && chmod +x /home/runner/run.sh
