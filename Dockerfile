@@ -37,7 +37,8 @@ RUN add-apt-repository ppa:deadsnakes/ppa \
   && apt clean
 
 RUN npm install -g pnpm --verbose
-RUN npm install -g @ziglang/cli --verbose
+RUN curl -fsSL https://ziglang.org/download/0.16.0/zig-x86_64-linux-0.16.0.tar.xz | tar -xJ -C /usr/local \
+  && ln -s /usr/local/zig-x86_64-linux-0.16.0/zig /usr/local/bin/zig
 
 RUN pnpm version
 
