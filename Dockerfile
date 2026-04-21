@@ -40,6 +40,8 @@ RUN npm install -g pnpm --verbose
 RUN curl -fsSL https://ziglang.org/download/0.16.0/zig-x86_64-linux-0.16.0.tar.xz | tar -xJ -C /usr/local \
   && ln -s /usr/local/zig-x86_64-linux-0.16.0/zig /usr/local/bin/zig
 
+RUN zig version
+
 RUN pnpm version
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -95,6 +97,6 @@ RUN echo "root ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 # _work is a hostPath mount so mkdir in image layers doesn't persist;
 # this wrapper runs after the volume is mounted.
 RUN mv /home/runner/run.sh /home/runner/run.sh.orig \
-    && printf '#!/bin/bash\nmkdir -p "${RUNNER_TEMP:-/home/runner/_work/_temp}/_runner_file_commands"\nexec /home/runner/run.sh.orig "$@"\n' \
-       > /home/runner/run.sh \
-    && chmod +x /home/runner/run.sh
+  && printf '#!/bin/bash\nmkdir -p "${RUNNER_TEMP:-/home/runner/_work/_temp}/_runner_file_commands"\nexec /home/runner/run.sh.orig "$@"\n' \
+  > /home/runner/run.sh \
+  && chmod +x /home/runner/run.sh
