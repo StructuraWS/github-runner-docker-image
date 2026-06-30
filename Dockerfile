@@ -36,13 +36,14 @@ RUN add-apt-repository ppa:deadsnakes/ppa \
   && apt install -y nodejs \
   && apt clean
 
+RUN npm install -g npm@latest
 RUN npm install -g pnpm --verbose
 RUN curl -fsSL https://ziglang.org/download/0.16.0/zig-x86_64-linux-0.16.0.tar.xz | tar -xJ -C /usr/local \
   && ln -s /usr/local/zig-x86_64-linux-0.16.0/zig /usr/local/bin/zig
 
 RUN zig version
 
-RUN pnpm version
+RUN pnpm --version
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
