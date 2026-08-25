@@ -58,12 +58,23 @@ SHELL ["/bin/sh", "-c"]
 # add modules installed with pip to PATH
 ENV PATH="${PATH}:/root/.cargo/bin:/home/runner/.cargo/bin:/home/runner/.local/bin:/usr/local/bin"
 
+# cargo-binstall fetches prebuilt binaries instead of compiling from source
+RUN curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash \
+  && cargo binstall -V
+
 # Validate the availability of cargo and install cargo audit
 # Also install cargo cache for auto clean the cache
-RUN cargo install cargo-audit cargo-cache
+RUN cargo binstall --no-confirm cargo-audit cargo-cache
 
-RUN cargo install sccache \
-  && cp /root/.cargo/bin/sccache /usr/local/bin/sccache
+# prebuilt sccache; compiling it from source costs ~5 minutes per image build
+ARG SCCACHE_VERSION=0.17.0
+RUN SCCACHE_TARBALL="sccache-v${SCCACHE_VERSION}-x86_64-unknown-linux-musl.tar.gz" \
+  && SCCACHE_URL="https://github.com/mozilla/sccache/releases/download/v${SCCACHE_VERSION}/${SCCACHE_TARBALL}" \
+  && curl -fsSL -o "/tmp/${SCCACHE_TARBALL}" "${SCCACHE_URL}" \
+  && echo "$(curl -fsSL "${SCCACHE_URL}.sha256")  /tmp/${SCCACHE_TARBALL}" | sha256sum -c - \
+  && tar -xzf "/tmp/${SCCACHE_TARBALL}" -C /usr/local/bin --strip-components=1 --wildcards '*/sccache' \
+  && rm "/tmp/${SCCACHE_TARBALL}" \
+  && sccache --version
 
 ENV RUSTC_WRAPPER=sccache
 ENV CARGO_INCREMENTAL=0

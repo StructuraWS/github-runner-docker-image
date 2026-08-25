@@ -31,7 +31,7 @@ jobs:
           BUILDNUM=${{ github.run_number }}
           IMAGE=${REGISTRY}/${APP_NAME}
           echo "IMAGE ${IMAGE} BUILDNUM ${BUILDNUM} SHA $SHA"
-          (echo "tagged_image=${IMAGE}:${BUILDNUM}-${SHA},${IMAGE}:latest"; echo "sha=${SHA}") >> "$GITHUB_OUTPUT"
+          (echo "tagged_image=${IMAGE}:${BUILDNUM}-${SHA},${IMAGE}:latest"; echo "image=${IMAGE}"; echo "sha=${SHA}") >> "$GITHUB_OUTPUT"
 
       - name: Install the latest BuildKit release
         env:
@@ -71,9 +71,13 @@ jobs:
         run: |
           set -uo pipefail
           TAGGED_IMAGE="${{ steps.prep.outputs.tagged_image }}"
+          CACHE_REF="${{ steps.prep.outputs.image }}:buildcache"
+          # import-cache warns and continues when the buildcache tag does not exist yet
           buildctl build \
             --frontend=dockerfile.v0 --local dockerfile=. --local context=. \
             --output "type=image,\"name=${TAGGED_IMAGE}\",push=true" \
+            --import-cache "type=registry,ref=${CACHE_REF}" \
+            --export-cache "type=registry,ref=${CACHE_REF},mode=max" \
             --progress=plain 2>&1 | tee build.log
           EXIT_CODE=${PIPESTATUS[0]}
           if [ "$EXIT_CODE" -ne 0 ]; then
